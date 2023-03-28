@@ -5,15 +5,15 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
+use App\Interfaces\TaskInterface;
 use App\Models\Task;
-use App\Repositories\TaskRepository;
 use Illuminate\Http\JsonResponse;
 
 class TaskController extends Controller
 {
-    protected TaskRepository $taskRepository;
+    protected TaskInterface $taskRepository;
 
-    public function __construct(TaskRepository $taskRepository)
+    public function __construct(TaskInterface $taskRepository)
     {
         $this->taskRepository = $taskRepository;
     }

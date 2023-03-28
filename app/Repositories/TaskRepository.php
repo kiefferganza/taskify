@@ -2,10 +2,11 @@
 
 namespace App\Repositories;
 
+use App\Interfaces\TaskInterface;
 use App\Models\Task;
 use Illuminate\Database\Eloquent\Collection;
 
-class TaskRepository
+class TaskRepository implements TaskInterface
 {
     public function getAllByUser($user): Collection
     {
