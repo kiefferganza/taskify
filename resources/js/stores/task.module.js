@@ -26,24 +26,20 @@ export const actions = {
                 return response
             })
             .catch((error) => {
-                commit('setErrors', error.response.data.message);
+                commit('setErrors', error.response.data.errors);
                 throw error
             })
     },
     ['update_task']({commit}, payload) {
-        console.log(payload)
-        return axios.put(`/api/tasks/${payload.taskId}`, {
-            title: payload.title,
-            description: payload.description,
-            due_date: payload.due_date,
-            id: payload.taskId,
+        return axios.put(`/api/tasks/${payload.id}`, {
+           ...payload,
         })
             .then((response) => {
                 commit('updateTask', response.data.data)
                 return response
             })
             .catch((error) => {
-                commit('setErrors', error.response.data.message);
+                commit('setErrors', error.response.data.errors);
                 throw error
             })
     },

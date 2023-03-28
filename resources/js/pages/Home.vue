@@ -5,14 +5,19 @@
        Create Task
        <svg aria-hidden="true" class="w-4 h-4 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
      </button>
-     <Kanban @show-edit-modal="showEditModal" :stages="stages" :blocks="taskList"></Kanban>
+     <Kanban @show-edit-modal="showEditModal" :stages="stages" :blocks="taskList" @update-block="updateTaskStatus"></Kanban>
       <FormModal is-form show-button show-button-group save-title="Save" title="Create Task" :show="showFormModal" @save="submit" @close="showFormModal = !showFormModal">
-        <div v-if="errorMessage" class="text-red-500 py-2 font-semibold">
-          <span>{{ errorMessage }}</span>
-        </div>
+       <div v-if="errorMessage">
+         <div v-for="(field, k) in errorMessage" :key="k" class="bg-red-500 text-white font-bold mb-4 shadow-lg py-2 px-4 pr-0">
+           <p v-for="error in field" :key="error" class="text-sm">
+             {{ error }}
+           </p>
+         </div>
+       </div>
+
           <div class="mb-6">
             <label for="title" class="block mb-2 text-sm font-medium text-gray-900 ">Title</label>
-            <input v-model="form.title" type="text" id="title" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="name@flowbite.com" required>
+            <input v-model="form.title" type="text" id="title" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Title" required>
           </div>
           <div class="mb-6">
             <label for="description" class="block mb-2 text-sm font-medium text-gray-900 ">Description</label>
@@ -70,6 +75,15 @@ export default {
   },
   methods: {
     ...mapActions('task', ['fetch_tasks', 'create_task', 'update_task']),
+    updateTaskStatus(id, status) {
+      const task = this.taskList.find((e) => e.id === Number(id))
+      const payload = {
+        id: task.id,
+        status: this.stages.indexOf(status)
+      }
+      this.update_task(payload)
+      this.fetch_tasks()
+    },
     showEditModal(id) {
       this.isUpdate = true
       const task = this.taskList.find((e) => e.id === id)
@@ -77,20 +91,22 @@ export default {
       form.title = task.title
       form.description = task.description
       form.due_date = task.due_date
-      form.taskId = task.id
+      form.id = task.id
       this.showFormModal = !this.showFormModal
     },
     fetchTasks() {
       this.fetch_tasks()
     },
-    submit(){
+    async submit(){
       if(!this.isUpdate) {
-        this.create_task(this.form)
+        await this.create_task(this.form)
       } else {
-        this.update_task(this.form)
+        await this.update_task(this.form)
       }
-      this.fetch_tasks()
-      // this.showFormModal = !this.showFormModal
+      await this.fetch_tasks()
+      if(this.errorMessage.length !== 0) {
+        this.showFormModal = !this.showFormModal
+      }
     }
   }
   }
