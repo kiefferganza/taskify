@@ -10,11 +10,10 @@
     <link rel="manifest" href="{{ asset('/manifest.json') }}">
     <link href="{{ mix('css/app.css') }}" rel="stylesheet">
     <script src="{{ mix('js/app.js') }}" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.4/flowbite.min.js"></script>
 </head>
 
 <body class="antialiased">
-    <div id="app" class="min-h-screen bg-white"></div>
+    <div id="app" class="bg-white"></div>
 </body>
 
 </html>

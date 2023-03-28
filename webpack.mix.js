@@ -17,7 +17,6 @@ mix.js('resources/js/app.js', 'public/js')
     .postCss('resources/css/app.css', 'public/css', [
         require("tailwindcss"),
     ])
-    .postCss("./node_modules/flowbite/src/flowbite.css", "public/css");
 
 if (mix.inProduction()) {
    mix.version();

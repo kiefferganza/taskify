@@ -23553,7 +23553,6 @@ __webpack_require__.r(__webpack_exports__);
         default:
           color = 'bg-yellow-500';
       }
-      console.log(index, color);
       return color;
     },
     getBlocks: function getBlocks(status) {
@@ -24055,6 +24054,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _components_Kanban__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../components/Kanban */ "./resources/js/components/Kanban.vue");
 /* harmony import */ var _components_common_FormModal__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../components/common/FormModal */ "./resources/js/components/common/FormModal.vue");
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm-bundler.js");
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
+function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -24064,12 +24071,16 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      tasks: [],
       stages: ['TODO', 'IN-PROGRESS', 'DONE'],
-      showFormModal: false
+      showFormModal: false,
+      form: {
+        title: '',
+        description: '',
+        due_date: ''
+      }
     };
   },
-  computed: {
+  computed: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapState)('task', ['tasks', 'errors'])), {}, {
     taskList: function taskList() {
       var _this = this;
       return this.tasks.map(function (e) {
@@ -24080,20 +24091,25 @@ __webpack_require__.r(__webpack_exports__);
           description: e.description
         };
       });
+    },
+    errorMessage: function errorMessage() {
+      var _this$errors;
+      return (_this$errors = this.errors) !== null && _this$errors !== void 0 ? _this$errors : null;
     }
-  },
+  }),
   mounted: function mounted() {
     this.fetchTasks();
   },
-  methods: {
+  methods: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapActions)('task', ['fetch_tasks', 'create_task'])), {}, {
     fetchTasks: function fetchTasks() {
-      var _this2 = this;
-      axios.get('/api/tasks').then(function (response) {
-        _this2.tasks = response.data;
-      });
+      this.fetch_tasks();
     },
-    submit: function submit() {}
-  }
+    submit: function submit() {
+      this.create_task(this.form);
+      this.fetch_tasks();
+      // this.showFormModal = !this.showFormModal
+    }
+  })
 });
 
 /***/ }),
@@ -24757,7 +24773,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
         _: 1 /* STABLE */
       }, 8 /* PROPS */, ["busy", "disabled"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_form_button, {
-        "class": "button button__secondary",
+        "class": "items-center px-3 py-2 text-sm font-medium text-center text-white bg-gray-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300",
         onClick: _cache[2] || (_cache[2] = function ($event) {
           return _ctx.$emit('close');
         })
@@ -25104,7 +25120,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
 
 var _hoisted_1 = {
-  "class": "container mx-auto p-6 bg-gray-300 border border-gray-200 rounded-lg shadow"
+  "class": "container mx-auto p-6 bg-gray-300 border border-gray-200 rounded-lg shadow overflow-y-scroll"
 };
 var _hoisted_2 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h1", {
   "class": "text-2xl font-bold mb-4"
@@ -25120,38 +25136,31 @@ var _hoisted_3 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementV
   d: "M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z",
   "clip-rule": "evenodd"
 })], -1 /* HOISTED */);
-var _hoisted_4 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("form", null, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+var _hoisted_4 = {
+  key: 0,
+  "class": "text-red-500 py-2 font-semibold"
+};
+var _hoisted_5 = {
   "class": "mb-6"
-}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+};
+var _hoisted_6 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
   "for": "title",
   "class": "block mb-2 text-sm font-medium text-gray-900"
-}, "Title"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
-  type: "text",
-  id: "title",
-  "class": "shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5",
-  placeholder: "name@flowbite.com",
-  required: ""
-})]), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+}, "Title", -1 /* HOISTED */);
+var _hoisted_7 = {
   "class": "mb-6"
-}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+};
+var _hoisted_8 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
   "for": "description",
   "class": "block mb-2 text-sm font-medium text-gray-900"
-}, "Description"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("textarea", {
-  type: "text",
-  id: "description",
-  "class": "shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5",
-  required: ""
-})]), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+}, "Description", -1 /* HOISTED */);
+var _hoisted_9 = {
   "class": "mb-6"
-}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+};
+var _hoisted_10 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
   "for": "due-date",
   "class": "block mb-2 text-sm font-medium text-gray-900"
-}, "Due Date"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
-  type: "date",
-  id: "due-date",
-  "class": "shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5",
-  required: ""
-})])], -1 /* HOISTED */);
+}, "Due Date", -1 /* HOISTED */);
 
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_Kanban = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("Kanban");
@@ -25165,18 +25174,44 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     stages: $data.stages,
     blocks: $options.taskList
   }, null, 8 /* PROPS */, ["stages", "blocks"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_FormModal, {
+    "is-form": "",
     "show-button": "",
     "show-button-group": "",
     "save-title": "Save",
     title: "Create Task",
     show: $data.showFormModal,
     onSave: $options.submit,
-    onClose: _cache[1] || (_cache[1] = function ($event) {
-      return $data.showFormModal = false;
+    onClose: _cache[4] || (_cache[4] = function ($event) {
+      return $data.showFormModal = !$data.showFormModal;
     })
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-      return [_hoisted_4];
+      return [$options.errorMessage ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.errorMessage), 1 /* TEXT */)])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [_hoisted_6, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+        "onUpdate:modelValue": _cache[1] || (_cache[1] = function ($event) {
+          return $data.form.title = $event;
+        }),
+        type: "text",
+        id: "title",
+        "class": "shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5",
+        placeholder: "name@flowbite.com",
+        required: ""
+      }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.form.title]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, [_hoisted_8, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("textarea", {
+        "onUpdate:modelValue": _cache[2] || (_cache[2] = function ($event) {
+          return $data.form.description = $event;
+        }),
+        type: "text",
+        id: "description",
+        "class": "shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5",
+        required: ""
+      }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.form.description]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [_hoisted_10, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+        "onUpdate:modelValue": _cache[3] || (_cache[3] = function ($event) {
+          return $data.form.due_date = $event;
+        }),
+        type: "date",
+        id: "due-date",
+        "class": "shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5",
+        required: ""
+      }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.form.due_date]])])];
     }),
     _: 1 /* STABLE */
   }, 8 /* PROPS */, ["show", "onSave"])]);
@@ -26045,16 +26080,109 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm-bundler.js");
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm-bundler.js");
 /* harmony import */ var _js_stores_auth_module__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/js/stores/auth.module */ "./resources/js/stores/auth.module.js");
+/* harmony import */ var _js_stores_task_module__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @/js/stores/task.module */ "./resources/js/stores/task.module.js");
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
+function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
 
 
-var store = (0,vuex__WEBPACK_IMPORTED_MODULE_1__.createStore)({
+
+var store = (0,vuex__WEBPACK_IMPORTED_MODULE_2__.createStore)({
   modules: {
-    auth: _js_stores_auth_module__WEBPACK_IMPORTED_MODULE_0__["default"]
+    auth: _js_stores_auth_module__WEBPACK_IMPORTED_MODULE_0__["default"],
+    task: _objectSpread(_objectSpread({}, _js_stores_task_module__WEBPACK_IMPORTED_MODULE_1__["default"]), {}, {
+      namespaced: true
+    })
   }
 });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (store);
+
+/***/ }),
+
+/***/ "./resources/js/stores/task.module.js":
+/*!********************************************!*\
+  !*** ./resources/js/stores/task.module.js ***!
+  \********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "actions": () => (/* binding */ actions),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   "getters": () => (/* binding */ getters),
+/* harmony export */   "mutations": () => (/* binding */ mutations),
+/* harmony export */   "state": () => (/* binding */ state)
+/* harmony export */ });
+var _actions;
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
+function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+var state = {
+  tasks: [],
+  errors: null
+};
+var actions = (_actions = {}, _defineProperty(_actions, 'fetch_tasks', function fetch_tasks(context) {
+  var _this = this;
+  return axios.get('/api/tasks').then(function (response) {
+    context.commit('setTasks', response.data);
+  })["catch"](function (error) {
+    _this.errors = error.response.data.errors;
+    context.commit('updateUser', null);
+    throw error;
+  });
+}), _defineProperty(_actions, 'create_task', function create_task(_ref, payload) {
+  var commit = _ref.commit;
+  console.log(payload);
+  return axios.post('/api/tasks', {
+    title: payload.title,
+    description: payload.description,
+    due_date: payload.due_date
+  }).then(function (response) {
+    commit('createTask', response.data);
+    return response;
+  })["catch"](function (error) {
+    commit('setErrors', error.response.data.message);
+    throw error;
+  });
+}), _defineProperty(_actions, 'update', function update(context) {
+  return axios.get('/api/v1/me').then(function (response) {
+    context.commit('updateUser', response.data.data);
+    return response;
+  })["catch"](function (error) {
+    context.commit('updateUser', null);
+    throw error;
+  });
+}), _actions);
+var mutations = {
+  setTasks: function setTasks(state, task) {
+    state.tasks = task;
+  },
+  createTask: function createTask(state, task) {
+    state.tasks.push(task);
+  },
+  updateTask: function updateTask(state, task) {
+    state.tasks = task;
+  },
+  setErrors: function setErrors(state, errors) {
+    state.errors = errors;
+  }
+};
+var getters = _defineProperty({}, 'tasks', function tasks(state) {
+  return state.task;
+});
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  state: state,
+  actions: actions,
+  mutations: mutations,
+  getters: getters
+});
 
 /***/ }),
 

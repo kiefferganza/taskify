@@ -81,7 +81,6 @@ export default {
         default:
           color = 'bg-yellow-500';
       }
-      console.log(index, color)
      return color
     },
     getBlocks(status) {

@@ -5,29 +5,27 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
-use App\Models\Task;
+use App\Repositories\TaskRepository;
+use Illuminate\Http\JsonResponse;
 
 class TaskController extends Controller
 {
+    protected TaskRepository $taskRepository;
+
+    public function __construct(TaskRepository $taskRepository)
+    {
+        $this->taskRepository = $taskRepository;
+    }
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index()
+    public function index(): JsonResponse
     {
-        //only get task from the authenticated user
-        return response()->json(auth()->user()->tasks);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        $tasks = $this->taskRepository->getAllByUser(auth()->user());
+        return response()->json($tasks);
     }
 
     /**
@@ -36,12 +34,12 @@ class TaskController extends Controller
      * @param  \App\Http\Requests\StoreTaskRequest  $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(StoreTaskRequest $request)
+    public function store(StoreTaskRequest $request): JsonResponse
     {
-        $task = new Task();
-        $task->name = $request->name;
-        $task->user_id = auth()->user()->id;
-        $task->save();
+        $taskData = $request->validated();
+        $taskData['user_id'] = auth()->user()->id;
+
+        $task = $this->taskRepository->create($taskData);
 
         return response()->json($task);
     }
@@ -58,17 +56,6 @@ class TaskController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Task  $task
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Task $task)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \App\Http\Requests\UpdateTaskRequest  $request
@@ -77,8 +64,9 @@ class TaskController extends Controller
      */
     public function update(UpdateTaskRequest $request, Task $task)
     {
-        //update user task
-        $task->update($request->all());
+        $taskData = $request->validated();
+
+        $this->taskRepository->update($task, $taskData);
     }
 
     /**
@@ -89,7 +77,6 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
-        //delete user task
-        $task->delete();
+        $this->taskRepository->delete($task);
     }
 }
