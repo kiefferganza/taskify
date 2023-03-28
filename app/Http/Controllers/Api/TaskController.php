@@ -36,7 +36,7 @@ class TaskController extends Controller
      */
     public function store(StoreTaskRequest $request): JsonResponse
     {
-        $taskData = $request->validated();
+        $taskData = $request->all();
         $taskData['user_id'] = auth()->user()->id;
 
         $task = $this->taskRepository->create($taskData);
