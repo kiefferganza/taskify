@@ -14,8 +14,16 @@
           <li class="drag-item bg-white text-black rounded-lg shadow" v-for="block in getBlocks(stage)" :data-block-id="block[idProp]" :key="block[idProp]">
             <slot :name="block[idProp]">
 
-              <h5 class="mb-2 text-2xl font-bold tracking-tight">{{block.title}}</h5>
-              <p class="font-normal text-gray-700">{{block.description}}</p>
+              <div class="container">
+                <h2 class="mb-3 text-3xl font-extrabold tracking-tight text-black">{{block.title}}</h2>
+                <p class="mb-3 text-gray-500">{{block.description}}</p>
+                <p class="mb-3 text-blue-500">{{convertDate(block.due_date)}}</p>
+                <div class="pt-3">
+                  <button @click="$emit('show-edit-modal', block.id)" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300">
+                    Edit Task
+                  </button>
+                </div>
+              </div>
             </slot>
           </li>
         </ul>
@@ -30,6 +38,7 @@
 <script>
 import dragula from 'dragula';
 import { Machine } from 'xstate';
+import {dateParser} from "../utils/date-parser";
 export default {
   name: 'KanbanBoard',
   props: {
@@ -69,6 +78,9 @@ export default {
     },
   },
   methods: {
+    convertDate(date) {
+      return dateParser(date);
+    },
     stagesColors(index) {
       let color = '';
       switch(index) {
@@ -230,7 +242,6 @@ ul.drag-list, ul.drag-inner-list {
 .drag-item {
   padding: 10px;
   margin: 10px;
-  height: 100px;
   transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
 }
 .drag-item.is-moving {

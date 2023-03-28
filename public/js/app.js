@@ -23497,7 +23497,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var dragula__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! dragula */ "./node_modules/dragula/dragula.js");
 /* harmony import */ var dragula__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(dragula__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var xstate__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! xstate */ "./node_modules/xstate/es/Machine.js");
+/* harmony import */ var xstate__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! xstate */ "./node_modules/xstate/es/Machine.js");
+/* harmony import */ var _utils_date_parser__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../utils/date-parser */ "./resources/js/utils/date-parser.js");
+
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -23541,6 +23543,9 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   methods: {
+    convertDate: function convertDate(date) {
+      return (0,_utils_date_parser__WEBPACK_IMPORTED_MODULE_1__.dateParser)(date);
+    },
     stagesColors: function stagesColors(index) {
       var color = '';
       switch (index) {
@@ -23653,7 +23658,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   created: function created() {
     if (!this.stateMachineConfig) return;
-    this.machine = (0,xstate__WEBPACK_IMPORTED_MODULE_1__.Machine)(this.stateMachineConfig);
+    this.machine = (0,xstate__WEBPACK_IMPORTED_MODULE_2__.Machine)(this.stateMachineConfig);
   }
 });
 
@@ -24073,10 +24078,12 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
     return {
       stages: ['TODO', 'IN-PROGRESS', 'DONE'],
       showFormModal: false,
+      isUpdate: false,
       form: {
         title: '',
         description: '',
-        due_date: ''
+        due_date: '',
+        taskId: ''
       }
     };
   },
@@ -24088,7 +24095,8 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
           id: e.id,
           status: _this.stages[e.status],
           title: e.title,
-          description: e.description
+          description: e.description,
+          due_date: e.due_date
         };
       });
     },
@@ -24100,12 +24108,28 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
   mounted: function mounted() {
     this.fetchTasks();
   },
-  methods: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapActions)('task', ['fetch_tasks', 'create_task'])), {}, {
+  methods: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapActions)('task', ['fetch_tasks', 'create_task', 'update_task'])), {}, {
+    showEditModal: function showEditModal(id) {
+      this.isUpdate = true;
+      var task = this.taskList.find(function (e) {
+        return e.id === id;
+      });
+      var form = this.form;
+      form.title = task.title;
+      form.description = task.description;
+      form.due_date = task.due_date;
+      form.taskId = task.id;
+      this.showFormModal = !this.showFormModal;
+    },
     fetchTasks: function fetchTasks() {
       this.fetch_tasks();
     },
     submit: function submit() {
-      this.create_task(this.form);
+      if (!this.isUpdate) {
+        this.create_task(this.form);
+      } else {
+        this.update_task(this.form);
+      }
       this.fetch_tasks();
       // this.showFormModal = !this.showFormModal
     }
@@ -24503,12 +24527,22 @@ var _hoisted_3 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementV
 var _hoisted_4 = ["data-status"];
 var _hoisted_5 = ["data-block-id"];
 var _hoisted_6 = {
-  "class": "mb-2 text-2xl font-bold tracking-tight"
+  "class": "container"
 };
 var _hoisted_7 = {
-  "class": "font-normal text-gray-700"
+  "class": "mb-3 text-3xl font-extrabold tracking-tight text-black"
 };
 var _hoisted_8 = {
+  "class": "mb-3 text-gray-500"
+};
+var _hoisted_9 = {
+  "class": "mb-3 text-blue-500"
+};
+var _hoisted_10 = {
+  "class": "pt-3"
+};
+var _hoisted_11 = ["onClick"];
+var _hoisted_12 = {
   "class": "drag-column-footer"
 };
 function render(_ctx, _cache, $props, $setup, $data, $options) {
@@ -24531,9 +24565,14 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         "data-block-id": block[$props.idProp],
         key: block[$props.idProp]
       }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.renderSlot)(_ctx.$slots, block[$props.idProp], {}, function () {
-        return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", _hoisted_6, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(block.title), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", _hoisted_7, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(block.description), 1 /* TEXT */)];
+        return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h2", _hoisted_7, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(block.title), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", _hoisted_8, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(block.description), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", _hoisted_9, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.convertDate(block.due_date)), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_10, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+          onClick: function onClick($event) {
+            return _ctx.$emit('show-edit-modal', block.id);
+          },
+          "class": "inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300"
+        }, " Edit Task ", 8 /* PROPS */, _hoisted_11)])])];
       })], 8 /* PROPS */, _hoisted_5);
-    }), 128 /* KEYED_FRAGMENT */))], 8 /* PROPS */, _hoisted_4), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.renderSlot)(_ctx.$slots, "footer-".concat(stage))])], 2 /* CLASS */);
+    }), 128 /* KEYED_FRAGMENT */))], 8 /* PROPS */, _hoisted_4), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_12, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.renderSlot)(_ctx.$slots, "footer-".concat(stage))])], 2 /* CLASS */);
   }), 128 /* KEYED_FRAGMENT */))])]);
 }
 
@@ -25171,9 +25210,10 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     }),
     "class": "inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300"
   }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Create Task "), _hoisted_3]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Kanban, {
+    onShowEditModal: $options.showEditModal,
     stages: $data.stages,
     blocks: $options.taskList
-  }, null, 8 /* PROPS */, ["stages", "blocks"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_FormModal, {
+  }, null, 8 /* PROPS */, ["onShowEditModal", "stages", "blocks"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_FormModal, {
     "is-form": "",
     "show-button": "",
     "show-button-group": "",
@@ -26139,7 +26179,6 @@ var actions = (_actions = {}, _defineProperty(_actions, 'fetch_tasks', function 
   });
 }), _defineProperty(_actions, 'create_task', function create_task(_ref, payload) {
   var commit = _ref.commit;
-  console.log(payload);
   return axios.post('/api/tasks', {
     title: payload.title,
     description: payload.description,
@@ -26151,12 +26190,19 @@ var actions = (_actions = {}, _defineProperty(_actions, 'fetch_tasks', function 
     commit('setErrors', error.response.data.message);
     throw error;
   });
-}), _defineProperty(_actions, 'update', function update(context) {
-  return axios.get('/api/v1/me').then(function (response) {
-    context.commit('updateUser', response.data.data);
+}), _defineProperty(_actions, 'update_task', function update_task(_ref2, payload) {
+  var commit = _ref2.commit;
+  console.log(payload);
+  return axios.put("/api/tasks/".concat(payload.taskId), {
+    title: payload.title,
+    description: payload.description,
+    due_date: payload.due_date,
+    id: payload.taskId
+  }).then(function (response) {
+    commit('updateTask', response.data.data);
     return response;
   })["catch"](function (error) {
-    context.commit('updateUser', null);
+    commit('setErrors', error.response.data.message);
     throw error;
   });
 }), _actions);
@@ -26183,6 +26229,64 @@ var getters = _defineProperty({}, 'tasks', function tasks(state) {
   mutations: mutations,
   getters: getters
 });
+
+/***/ }),
+
+/***/ "./resources/js/utils/date-parser.js":
+/*!*******************************************!*\
+  !*** ./resources/js/utils/date-parser.js ***!
+  \*******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "dateParser": () => (/* binding */ dateParser)
+/* harmony export */ });
+var dateParser = function dateParser(dateString) {
+  var parsedDate = new Date(dateString);
+  var diff = parsedDate.getTime() - Date.now();
+  var seconds = Math.floor(Math.abs(diff) / 1000);
+  var minutes = Math.floor(seconds / 60);
+  var hours = Math.floor(minutes / 60);
+  var days = Math.floor(hours / 24);
+  var weeks = Math.floor(days / 7);
+  var months = Math.floor(days / 30);
+  var years = Math.floor(days / 365);
+  if (diff > 0) {
+    if (seconds < 60) {
+      return 'just now';
+    } else if (minutes < 60) {
+      return "".concat(minutes, " minute").concat(minutes > 1 ? 's' : '', " from now");
+    } else if (hours < 24) {
+      return "".concat(hours, " hour").concat(hours > 1 ? 's' : '', " from now");
+    } else if (days < 7) {
+      return "".concat(days, " day").concat(days > 1 ? 's' : '', " from now");
+    } else if (weeks < 4) {
+      return "".concat(weeks, " week").concat(weeks > 1 ? 's' : '', " from now");
+    } else if (months < 12) {
+      return "".concat(months, " month").concat(months > 1 ? 's' : '', " from now");
+    } else {
+      return "".concat(years, " year").concat(years > 1 ? 's' : '', " from now");
+    }
+  } else {
+    if (seconds < 60) {
+      return 'just now';
+    } else if (minutes < 60) {
+      return "".concat(minutes, " minute").concat(minutes > 1 ? 's' : '', " ago");
+    } else if (hours < 24) {
+      return "".concat(hours, " hour").concat(hours > 1 ? 's' : '', " ago");
+    } else if (days < 7) {
+      return "".concat(days, " day").concat(days > 1 ? 's' : '', " ago");
+    } else if (weeks < 4) {
+      return "".concat(weeks, " week").concat(weeks > 1 ? 's' : '', " ago");
+    } else if (months < 12) {
+      return "".concat(months, " month").concat(months > 1 ? 's' : '', " ago");
+    } else {
+      return "".concat(years, " year").concat(years > 1 ? 's' : '', " ago");
+    }
+  }
+};
 
 /***/ }),
 
@@ -28386,7 +28490,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\nul.drag-list, ul.drag-inner-list {\n  list-style-type: none;\n  margin: 0;\n  padding: 0;\n}\n.drag-container {\n  max-width: 1000px;\n  margin: 20px auto;\n}\n.drag-list {\n  display: flex;\n  align-items: flex-start;\n}\n@media (max-width: 690px) {\n.drag-list {\n    display: block;\n}\n}\n.drag-column {\n  flex: 1;\n  margin: 0 10px;\n  position: relative;\n  overflow: hidden;\n}\n@media (max-width: 690px) {\n.drag-column {\n    margin-bottom: 30px;\n}\n}\n.drag-column h2 {\n  font-size: 0.8rem;\n  margin: 0;\n  text-transform: uppercase;\n  font-weight: 600;\n}\n.drag-column-header {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  padding: 10px;\n}\n.drag-inner-list {\n  min-height: 50px;\n  color: white;\n}\n.drag-item {\n  padding: 10px;\n  margin: 10px;\n  height: 100px;\n  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);\n}\n.drag-item.is-moving {\n  transform: scale(1.5);\n  background: rgba(0, 0, 0, 0.8);\n}\n.drag-header-more {\n  cursor: pointer;\n}\n.drag-options {\n  position: absolute;\n  top: 44px;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  padding: 10px;\n  transform: translateX(100%);\n  opacity: 0;\n  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);\n}\n.drag-options.active {\n  transform: translateX(0);\n  opacity: 1;\n}\n.drag-options-label {\n  display: block;\n  margin: 0 0 5px 0;\n}\n.drag-options-label input {\n  opacity: 0.6;\n}\n.drag-options-label span {\n  display: inline-block;\n  font-size: 0.9rem;\n  font-weight: 400;\n  margin-left: 5px;\n}\n\n/* Dragula CSS  */\n.gu-mirror {\n  position: fixed !important;\n  margin: 0 !important;\n  z-index: 9999 !important;\n  opacity: 0.8;\n  list-style-type: none;\n}\n.gu-hide {\n  display: none !important;\n}\n.gu-unselectable {\n  -webkit-user-select: none !important;\n  -moz-user-select: none !important;\n  user-select: none !important;\n}\n.gu-transit {\n  opacity: 0.2;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\nul.drag-list, ul.drag-inner-list {\n  list-style-type: none;\n  margin: 0;\n  padding: 0;\n}\n.drag-container {\n  max-width: 1000px;\n  margin: 20px auto;\n}\n.drag-list {\n  display: flex;\n  align-items: flex-start;\n}\n@media (max-width: 690px) {\n.drag-list {\n    display: block;\n}\n}\n.drag-column {\n  flex: 1;\n  margin: 0 10px;\n  position: relative;\n  overflow: hidden;\n}\n@media (max-width: 690px) {\n.drag-column {\n    margin-bottom: 30px;\n}\n}\n.drag-column h2 {\n  font-size: 0.8rem;\n  margin: 0;\n  text-transform: uppercase;\n  font-weight: 600;\n}\n.drag-column-header {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  padding: 10px;\n}\n.drag-inner-list {\n  min-height: 50px;\n  color: white;\n}\n.drag-item {\n  padding: 10px;\n  margin: 10px;\n  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);\n}\n.drag-item.is-moving {\n  transform: scale(1.5);\n  background: rgba(0, 0, 0, 0.8);\n}\n.drag-header-more {\n  cursor: pointer;\n}\n.drag-options {\n  position: absolute;\n  top: 44px;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  padding: 10px;\n  transform: translateX(100%);\n  opacity: 0;\n  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);\n}\n.drag-options.active {\n  transform: translateX(0);\n  opacity: 1;\n}\n.drag-options-label {\n  display: block;\n  margin: 0 0 5px 0;\n}\n.drag-options-label input {\n  opacity: 0.6;\n}\n.drag-options-label span {\n  display: inline-block;\n  font-size: 0.9rem;\n  font-weight: 400;\n  margin-left: 5px;\n}\n\n/* Dragula CSS  */\n.gu-mirror {\n  position: fixed !important;\n  margin: 0 !important;\n  z-index: 9999 !important;\n  opacity: 0.8;\n  list-style-type: none;\n}\n.gu-hide {\n  display: none !important;\n}\n.gu-unselectable {\n  -webkit-user-select: none !important;\n  -moz-user-select: none !important;\n  user-select: none !important;\n}\n.gu-transit {\n  opacity: 0.2;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

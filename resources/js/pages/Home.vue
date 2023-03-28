@@ -5,7 +5,7 @@
        Create Task
        <svg aria-hidden="true" class="w-4 h-4 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
      </button>
-     <Kanban :stages="stages" :blocks="taskList"></Kanban>
+     <Kanban @show-edit-modal="showEditModal" :stages="stages" :blocks="taskList"></Kanban>
       <FormModal is-form show-button show-button-group save-title="Save" title="Create Task" :show="showFormModal" @save="submit" @close="showFormModal = !showFormModal">
         <div v-if="errorMessage" class="text-red-500 py-2 font-semibold">
           <span>{{ errorMessage }}</span>
@@ -39,10 +39,12 @@ export default {
     return {
       stages: ['TODO', 'IN-PROGRESS', 'DONE'],
       showFormModal: false,
+      isUpdate: false,
       form: {
         title: '',
         description: '',
-        due_date: ''
+        due_date: '',
+        taskId: '',
       }
     }
   },
@@ -55,6 +57,7 @@ export default {
           status: this.stages[e.status],
           title: e.title,
           description: e.description,
+          due_date: e.due_date
         }
       })
     },
@@ -66,12 +69,26 @@ export default {
     this.fetchTasks()
   },
   methods: {
-    ...mapActions('task', ['fetch_tasks', 'create_task']),
+    ...mapActions('task', ['fetch_tasks', 'create_task', 'update_task']),
+    showEditModal(id) {
+      this.isUpdate = true
+      const task = this.taskList.find((e) => e.id === id)
+      const form = this.form
+      form.title = task.title
+      form.description = task.description
+      form.due_date = task.due_date
+      form.taskId = task.id
+      this.showFormModal = !this.showFormModal
+    },
     fetchTasks() {
       this.fetch_tasks()
     },
     submit(){
-      this.create_task(this.form)
+      if(!this.isUpdate) {
+        this.create_task(this.form)
+      } else {
+        this.update_task(this.form)
+      }
       this.fetch_tasks()
       // this.showFormModal = !this.showFormModal
     }

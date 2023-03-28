@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('title');
             $table->text('description');
             $table->tinyInteger('status')->default(0);
-            $table->dateTime('due_date')->nullable();
+            $table->date('due_date')->nullable();
             $table->foreignId('user_id')->constrained();
             $table->timestamps();
         });

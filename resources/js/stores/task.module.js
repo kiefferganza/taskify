@@ -16,7 +16,6 @@ export const actions = {
             })
     },
     ['create_task']({commit}, payload) {
-        console.log(payload)
         return axios.post('/api/tasks', {
                     title: payload.title,
                     description: payload.description,
@@ -31,14 +30,20 @@ export const actions = {
                 throw error
             })
     },
-    ['update'](context) {
-        return axios.get('/api/v1/me')
+    ['update_task']({commit}, payload) {
+        console.log(payload)
+        return axios.put(`/api/tasks/${payload.taskId}`, {
+            title: payload.title,
+            description: payload.description,
+            due_date: payload.due_date,
+            id: payload.taskId,
+        })
             .then((response) => {
-                context.commit('updateUser', response.data.data)
+                commit('updateTask', response.data.data)
                 return response
             })
             .catch((error) => {
-                context.commit('updateUser', null);
+                commit('setErrors', error.response.data.message);
                 throw error
             })
     },
