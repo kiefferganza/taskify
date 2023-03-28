@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\TaskController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,3 +20,6 @@ Route::prefix('v1')
     ->group(function () {
         Route::get('/me', User\MeController::class);
     });
+
+Route::resource('tasks', TaskController::class)
+    ->middleware(['auth:sanctum']);

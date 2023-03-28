@@ -5,6 +5,7 @@ module.exports = {
     "./resources/**/*.blade.php",
     "./resources/**/*.js",
     "./resources/**/*.vue",
+      "./node_modules/flowbite/**/*.js"
   ],
   darkMode: 'class',
   theme: {
@@ -14,5 +15,7 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+      require('flowbite/plugin'),
+  ],
 }

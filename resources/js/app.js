@@ -2,6 +2,8 @@ import { createApp } from 'vue'
 import store from '@/js/stores';
 import router from '@/js/router';
 import App from '@/js/layouts/App';
+import vueKanban from 'vue-kanban';
+import 'flowbite';
 
 window.axios = require('axios');
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
@@ -17,7 +19,8 @@ store.dispatch('attempt_user')
   .finally(() => {
     const app = createApp(App)
         .use(store)
-        .use(router);
+        .use(router)
+        .use(vueKanban);
 
     app.mount('#app');
   })

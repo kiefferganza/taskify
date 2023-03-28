@@ -19,5 +19,9 @@
         "vue-loader": "^17.0.0",
         "vue-router": "^4.0.14",
         "vuex": "^4.0.2"
+    },
+    "dependencies": {
+        "flowbite": "^1.6.4",
+        "vue-kanban": "^1.8.0"
     }
 }
