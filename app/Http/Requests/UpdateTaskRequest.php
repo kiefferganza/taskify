@@ -23,6 +23,8 @@ class UpdateTaskRequest extends FormRequest
      */
     public function rules()
     {
-        return [];
+        return [
+            'due_date' => ['date', 'after_or_equal:today']
+        ];
     }
 }
