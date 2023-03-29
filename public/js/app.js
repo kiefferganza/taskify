@@ -23540,6 +23540,21 @@ __webpack_require__.r(__webpack_exports__);
   computed: {
     localBlocks: function localBlocks() {
       return this.blocks;
+    },
+    taskPerStage: function taskPerStage() {
+      var countTodo = 0;
+      var countInProgress = 0;
+      var countDone = 0;
+      for (var i = 0; i < this.localBlocks.length; i++) {
+        if (this.localBlocks[i].status === 'TODO') {
+          countTodo++;
+        } else if (this.localBlocks[i].status === 'IN-PROGRESS') {
+          countInProgress++;
+        } else if (this.localBlocks[i].status === 'DONE') {
+          countDone++;
+        }
+      }
+      return [countTodo, countInProgress, countDone];
     }
   },
   methods: {
@@ -23825,9 +23840,6 @@ __webpack_require__.r(__webpack_exports__);
       form.description = updateData.description;
       form.due_date = updateData.due_date;
       form.id = updateData.id;
-    },
-    updateData: function updateData(newData) {
-      console.log(newData);
     }
   },
   methods: {
@@ -24176,7 +24188,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
   mounted: function mounted() {
     this.fetchTasks();
   },
-  methods: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapActions)('task', ['fetch_tasks', 'create_task', 'update_task'])), {}, {
+  methods: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapActions)('task', ['fetch_tasks', 'create_task', 'update_task', 'delete_task'])), {}, {
     updateTaskStatus: function updateTaskStatus(id, status) {
       var task = this.taskList.find(function (e) {
         return e.id === Number(id);
@@ -24198,7 +24210,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
       updateData.description = task.description;
       updateData.due_date = task.due_date;
       updateData.id = task.id;
-      this.showFormModal = !this.showFormModal;
+      this.showFormModal = true;
     },
     fetchTasks: function fetchTasks() {
       this.fetch_tasks();
@@ -24236,6 +24248,28 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
               return _context.stop();
           }
         }, _callee);
+      }))();
+    },
+    deleteTask: function deleteTask(id) {
+      var _this3 = this;
+      return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
+        return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+          while (1) switch (_context2.prev = _context2.next) {
+            case 0:
+              _context2.next = 2;
+              return _this3.delete_task(id);
+            case 2:
+              _context2.next = 4;
+              return _this3.fetch_tasks();
+            case 4:
+              if (_this3.errorMessage.length === 0) {
+                _this3.showFormModal = false;
+              }
+            case 5:
+            case "end":
+              return _context2.stop();
+          }
+        }, _callee2);
       }))();
     }
   })
@@ -24626,28 +24660,45 @@ var _hoisted_1 = {
 var _hoisted_2 = {
   "class": "drag-list"
 };
-var _hoisted_3 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+var _hoisted_3 = {
+  "class": "drag-column-header text-black text-2xl font-bold"
+};
+var _hoisted_4 = {
+  "class": "flex flex items-center flex-shrink-0 h-10 px-2"
+};
+var _hoisted_5 = {
+  "class": "flex items-center justify-center w-5 h-5 ml-2 text-sm font-semibold text-indigo-500 bg-white rounded bg-opacity-30"
+};
+var _hoisted_6 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
+  "class": "w-5 h-5",
+  fill: "none",
+  viewBox: "0 0 24 24",
+  stroke: "currentColor"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("path", {
+  "stroke-linecap": "round",
+  "stroke-linejoin": "round",
+  "stroke-width": "2",
+  d: "M12 6v6m0 0v6m0-6h6m-6 0H6"
+})], -1 /* HOISTED */);
+var _hoisted_7 = [_hoisted_6];
+var _hoisted_8 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
   "class": "drag-options"
 }, null, -1 /* HOISTED */);
-var _hoisted_4 = ["data-status"];
-var _hoisted_5 = ["data-block-id"];
-var _hoisted_6 = {
+var _hoisted_9 = ["data-status"];
+var _hoisted_10 = ["onClick", "data-block-id"];
+var _hoisted_11 = {
   "class": "container"
 };
-var _hoisted_7 = {
+var _hoisted_12 = {
   "class": "mb-3 text-3xl font-extrabold tracking-tight text-black"
 };
-var _hoisted_8 = {
+var _hoisted_13 = {
   "class": "mb-3 text-gray-500"
 };
-var _hoisted_9 = {
+var _hoisted_14 = {
   "class": "mb-3 text-blue-500"
 };
-var _hoisted_10 = {
-  "class": "pt-3"
-};
-var _hoisted_11 = ["onClick"];
-var _hoisted_12 = {
+var _hoisted_15 = {
   "class": "drag-column-footer"
 };
 function render(_ctx, _cache, $props, $setup, $data, $options) {
@@ -24655,29 +24706,31 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("li", {
       "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(["drag-column", _defineProperty({}, 'drag-column-' + stage, true)]),
       key: stage
-    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
-      "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)([$options.stagesColors(i), "drag-column-header text-white rounded-lg shadow"])
-    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.renderSlot)(_ctx.$slots, stage, {}, function () {
-      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h2", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(stage), 1 /* TEXT */)];
-    })], 2 /* CLASS */), _hoisted_3, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("ul", {
+    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.renderSlot)(_ctx.$slots, stage, {}, function () {
+      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h2", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(stage), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.taskPerStage[i]), 1 /* TEXT */), i === 0 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("button", {
+        key: 0,
+        onClick: _cache[0] || (_cache[0] = function ($event) {
+          return _ctx.$emit('create-task');
+        }),
+        "class": "flex items-center justify-center w-6 h-6 ml-auto text-indigo-500 rounded hover:bg-indigo-500 hover:text-indigo-100"
+      }, _hoisted_7)) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])];
+    })]), _hoisted_8, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("ul", {
       "class": "drag-inner-list",
       ref_for: true,
       ref: "list",
       "data-status": stage
     }, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($options.getBlocks(stage), function (block) {
       return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("li", {
-        "class": "drag-item bg-white text-black rounded-lg shadow",
+        "class": "drag-item bg-white text-black rounded-lg shadow cursor-pointer hover:bg-gray-200",
+        onClick: function onClick($event) {
+          return _ctx.$emit('show-edit-modal', block.id);
+        },
         "data-block-id": block[$props.idProp],
         key: block[$props.idProp]
       }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.renderSlot)(_ctx.$slots, block[$props.idProp], {}, function () {
-        return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h2", _hoisted_7, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(block.title), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", _hoisted_8, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(block.description), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", _hoisted_9, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.convertDate(block.due_date)), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_10, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
-          onClick: function onClick($event) {
-            return _ctx.$emit('show-edit-modal', block.id);
-          },
-          "class": "inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300"
-        }, " Edit Task ", 8 /* PROPS */, _hoisted_11)])])];
-      })], 8 /* PROPS */, _hoisted_5);
-    }), 128 /* KEYED_FRAGMENT */))], 8 /* PROPS */, _hoisted_4), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_12, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.renderSlot)(_ctx.$slots, "footer-".concat(stage))])], 2 /* CLASS */);
+        return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_11, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h2", _hoisted_12, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(block.title), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", _hoisted_13, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(block.description), 1 /* TEXT */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", _hoisted_14, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.convertDate(block.due_date)), 1 /* TEXT */)])];
+      })], 8 /* PROPS */, _hoisted_10);
+    }), 128 /* KEYED_FRAGMENT */))], 8 /* PROPS */, _hoisted_9), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_15, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.renderSlot)(_ctx.$slots, "footer-".concat(stage))])], 2 /* CLASS */);
   }), 128 /* KEYED_FRAGMENT */))])]);
 }
 
@@ -24982,8 +25035,8 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     title: $props.isUpdate ? 'Update Task' : 'Create Task',
     show: $props.showFormModal,
     onSave: $options.submit,
-    onClose: _cache[3] || (_cache[3] = function ($event) {
-      return $props.showFormModal = !$props.showFormModal;
+    onClose: _cache[4] || (_cache[4] = function ($event) {
+      return _ctx.$emit('close-modal');
     })
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
@@ -25022,7 +25075,13 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         id: "due-date",
         "class": "shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5",
         required: ""
-      }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.form.due_date]])])];
+      }, null, 512 /* NEED_PATCH */), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.form.due_date]])]), $props.isUpdate ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("button", {
+        key: 1,
+        onClick: _cache[3] || (_cache[3] = function ($event) {
+          return _ctx.$emit('delete', $props.updateData.id);
+        }),
+        "class": "inline-flex items-center font-medium text-red-800 hover:text-red-900"
+      }, " Delete Task ")) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)];
     }),
     _: 1 /* STABLE */
   }, 8 /* PROPS */, ["title", "show", "onSave"]);
@@ -25360,7 +25419,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
 
 var _hoisted_1 = {
-  "class": "container mx-auto p-6 bg-gray-300 border border-gray-200 rounded-lg shadow overflow-y-scroll"
+  "class": "container mx-auto p-6 bg-gradient-to-tr from-blue-200 via-indigo-200 to-blue-300 border border-gray-200 rounded-lg shadow overflow-y-scroll"
 };
 var _hoisted_2 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h1", {
   "class": "text-2xl font-bold mb-4"
@@ -25382,21 +25441,28 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_TaskModal = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("TaskModal");
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [_hoisted_2, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
     onClick: _cache[0] || (_cache[0] = function ($event) {
-      return $data.showFormModal = !$data.showFormModal;
+      return $data.showFormModal = true;
     }),
     "class": "inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300"
   }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Create Task "), _hoisted_3]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Kanban, {
     onShowEditModal: $options.showEditModal,
     stages: $data.stages,
     blocks: $options.taskList,
+    onCreateTask: _cache[1] || (_cache[1] = function ($event) {
+      return $data.showFormModal = true;
+    }),
     onUpdateBlock: $options.updateTaskStatus
   }, null, 8 /* PROPS */, ["onShowEditModal", "stages", "blocks", "onUpdateBlock"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_TaskModal, {
     "show-form-modal": $data.showFormModal,
     "is-update": $data.isUpdate,
     "error-message": $options.errorMessage,
     "update-data": $data.updateData,
-    onSubmitForm: $options.submit
-  }, null, 8 /* PROPS */, ["show-form-modal", "is-update", "error-message", "update-data", "onSubmitForm"])]);
+    onCloseModal: _cache[2] || (_cache[2] = function ($event) {
+      return $data.showFormModal = false;
+    }),
+    onSubmitForm: $options.submit,
+    onDelete: $options.deleteTask
+  }, null, 8 /* PROPS */, ["show-form-modal", "is-update", "error-message", "update-data", "onSubmitForm", "onDelete"])]);
 }
 
 /***/ }),
@@ -26337,6 +26403,14 @@ var actions = (_actions = {}, _defineProperty(_actions, 'fetch_tasks', function 
 }), _defineProperty(_actions, 'update_task', function update_task(_ref2, payload) {
   var commit = _ref2.commit;
   return axios.put("/api/tasks/".concat(payload.id), _objectSpread({}, payload)).then(function (response) {
+    return response;
+  })["catch"](function (error) {
+    commit('setErrors', error.response.data.errors);
+    throw error;
+  });
+}), _defineProperty(_actions, 'delete_task', function delete_task(_ref3, payload) {
+  var commit = _ref3.commit;
+  return axios["delete"]("/api/tasks/".concat(payload)).then(function (response) {
     return response;
   })["catch"](function (error) {
     commit('setErrors', error.response.data.errors);

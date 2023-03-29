@@ -42,6 +42,16 @@ export const actions = {
                 throw error
             })
     },
+    ['delete_task']({commit}, payload) {
+        return axios.delete(`/api/tasks/${payload}`)
+            .then((response) => {
+                return response
+            })
+            .catch((error) => {
+                commit('setErrors', error.response.data.errors);
+                throw error
+            })
+    }
 };
 
 export const mutations = {

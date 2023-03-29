@@ -3,26 +3,27 @@
     <ul class="drag-list">
       <li v-for="(stage, i) in stages" class="drag-column" :class="{['drag-column-' + stage]: true}" :key="stage">
         <span
-          :class="stagesColors(i)"
-          class="drag-column-header text-white rounded-lg shadow">
+          class="drag-column-header text-black text-2xl font-bold ">
           <slot :name="stage">
-            <h2>{{ stage }}</h2>
+            <div class="flex flex items-center flex-shrink-0 h-10 px-2">
+              <h2>{{ stage }}</h2>
+              <span class="flex items-center justify-center w-5 h-5 ml-2 text-sm font-semibold text-indigo-500 bg-white rounded bg-opacity-30">{{taskPerStage[i]}}</span>
+              <button v-if="i === 0" @click="$emit('create-task')" class="flex items-center justify-center w-6 h-6 ml-auto text-indigo-500 rounded hover:bg-indigo-500 hover:text-indigo-100">
+					        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+						        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+					        </svg>
+				      </button>
+            </div>
           </slot>
         </span>
         <div class="drag-options"></div>
         <ul class="drag-inner-list" ref="list" :data-status="stage">
-          <li class="drag-item bg-white text-black rounded-lg shadow" v-for="block in getBlocks(stage)" :data-block-id="block[idProp]" :key="block[idProp]">
+          <li class="drag-item bg-white text-black rounded-lg shadow cursor-pointer hover:bg-gray-200" @click="$emit('show-edit-modal', block.id)" v-for="block in getBlocks(stage)" :data-block-id="block[idProp]" :key="block[idProp]">
             <slot :name="block[idProp]">
-
               <div class="container">
                 <h2 class="mb-3 text-3xl font-extrabold tracking-tight text-black">{{block.title}}</h2>
                 <p class="mb-3 text-gray-500">{{block.description}}</p>
                 <p class="mb-3 text-blue-500">{{convertDate(block.due_date)}}</p>
-                <div class="pt-3">
-                  <button @click="$emit('show-edit-modal', block.id)" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300">
-                    Edit Task
-                  </button>
-                </div>
               </div>
             </slot>
           </li>
@@ -75,6 +76,22 @@ export default {
   computed: {
     localBlocks() {
       return this.blocks;
+    },
+    taskPerStage() {
+      let countTodo = 0;
+      let countInProgress = 0;
+      let countDone = 0;
+
+      for (let i = 0; i < this.localBlocks.length; i++) {
+        if (this.localBlocks[i].status === 'TODO') {
+          countTodo++;
+        } else if (this.localBlocks[i].status === 'IN-PROGRESS') {
+          countInProgress++;
+        } else if (this.localBlocks[i].status === 'DONE') {
+          countDone++;
+        }
+      }
+      return  [countTodo, countInProgress, countDone]
     },
   },
   methods: {

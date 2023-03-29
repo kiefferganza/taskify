@@ -1,5 +1,5 @@
 <template>
-  <FormModal is-form show-button show-button-group save-title="Save" :title="isUpdate ? 'Update Task' : 'Create Task'" :show="showFormModal" @save="submit" @close="showFormModal = !showFormModal">
+  <FormModal is-form show-button show-button-group save-title="Save" :title="isUpdate ? 'Update Task' : 'Create Task'" :show="showFormModal" @save="submit" @close="$emit('close-modal')">
     <div v-if="errorMessage">
       <div v-for="(field, k) in errorMessage" :key="k" class="bg-red-500 text-white font-bold mb-4 shadow-lg py-2 px-4 pr-0">
         <p v-for="error in field" :key="error" class="text-sm">
@@ -20,6 +20,9 @@
       <label for="due-date" class="block mb-2 text-sm font-medium text-gray-900">Due Date</label>
       <input v-model="form.due_date" type="date" id="due-date" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
     </div>
+    <button v-if="isUpdate" @click="$emit('delete', updateData.id)" class="inline-flex items-center font-medium text-red-800 hover:text-red-900">
+      Delete Task
+    </button>
   </FormModal>
 </template>
 
@@ -67,10 +70,6 @@ watch: {
     form.due_date = updateData.due_date
     form.id = updateData.id
   },
-  updateData(newData) {
-    console.log(newData)
-
-  }
 },
   methods: {
     submit() {
