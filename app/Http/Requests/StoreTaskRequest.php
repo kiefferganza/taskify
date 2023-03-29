@@ -26,7 +26,7 @@ class StoreTaskRequest extends FormRequest
         return [
             'title' => 'required|max:20',
             'description' => 'required|max:255',
-            'due_date' => 'required|date|after:today'
+            'due_date' => 'required|date'
         ];
     }
 }
