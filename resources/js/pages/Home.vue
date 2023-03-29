@@ -1,56 +1,50 @@
 <template>
    <div class="container mx-auto p-6 bg-gray-300 border border-gray-200 rounded-lg shadow overflow-y-scroll">
      <h1 class="text-2xl font-bold mb-4">Kanban</h1>
-     <button @click="showFormModal = !showFormModal"  class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300">
+     <button @click="showFormModal = !showFormModal"
+             class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300">
        Create Task
-       <svg aria-hidden="true" class="w-4 h-4 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
-     </button>
-     <Kanban @show-edit-modal="showEditModal" :stages="stages" :blocks="taskList" @update-block="updateTaskStatus"></Kanban>
-      <FormModal is-form show-button show-button-group save-title="Save" title="Create Task" :show="showFormModal" @save="submit" @close="showFormModal = !showFormModal">
-       <div v-if="errorMessage">
-         <div v-for="(field, k) in errorMessage" :key="k" class="bg-red-500 text-white font-bold mb-4 shadow-lg py-2 px-4 pr-0">
-           <p v-for="error in field" :key="error" class="text-sm">
-             {{ error }}
-           </p>
-         </div>
-       </div>
+       <svg aria-hidden="true" class="w-4 h-4 ml-2 -mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+         <path fill-rule="evenodd"
+               d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
+               clip-rule="evenodd">
 
-          <div class="mb-6">
-            <label for="title" class="block mb-2 text-sm font-medium text-gray-900 ">Title</label>
-            <input v-model="form.title" type="text" id="title" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Title" required>
-          </div>
-          <div class="mb-6">
-            <label for="description" class="block mb-2 text-sm font-medium text-gray-900 ">Description</label>
-            <textarea v-model="form.description" type="text" id="description" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required></textarea>
-          </div>
-          <div class="mb-6">
-            <label for="due-date" class="block mb-2 text-sm font-medium text-gray-900">Due Date</label>
-            <input v-model="form.due_date" type="date" id="due-date" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
-          </div>
-      </FormModal>
+         </path>
+       </svg>
+     </button>
+     <Kanban
+       @show-edit-modal="showEditModal"
+       :stages="stages"
+       :blocks="taskList"
+       @update-block="updateTaskStatus">
+     </Kanban>
+      <TaskModal
+        :show-form-modal="showFormModal"
+        :is-update="isUpdate"
+        :error-message="errorMessage"
+        :update-data="updateData"
+        @submit-form="submit"
+      >
+
+      </TaskModal>
    </div>
 </template>
 
 <script>
 import Kanban from '../components/Kanban';
-import FormModal from "../components/common/FormModal";
+import TaskModal from "../components/task/TaskModal";
 import {mapActions, mapState} from "vuex";
 export default {
   components: {
     Kanban,
-    FormModal
+    TaskModal
   },
   data() {
     return {
       stages: ['TODO', 'IN-PROGRESS', 'DONE'],
       showFormModal: false,
       isUpdate: false,
-      form: {
-        title: '',
-        description: '',
-        due_date: '',
-        taskId: '',
-      }
+      updateData: {},
     }
   },
   computed: {
@@ -67,7 +61,7 @@ export default {
       })
     },
     errorMessage() {
-      return this.errors ?? null
+      return this.errors ?? []
     }
   },
   mounted() {
@@ -87,25 +81,27 @@ export default {
     showEditModal(id) {
       this.isUpdate = true
       const task = this.taskList.find((e) => e.id === id)
-      const form = this.form
-      form.title = task.title
-      form.description = task.description
-      form.due_date = task.due_date
-      form.id = task.id
+      const updateData = this.updateData
+      updateData.title = task.title
+      updateData.description = task.description
+      updateData.due_date = task.due_date
+      updateData.id = task.id
       this.showFormModal = !this.showFormModal
     },
     fetchTasks() {
       this.fetch_tasks()
     },
-    async submit(){
-      if(!this.isUpdate) {
-        await this.create_task(this.form)
+    async submit(data){
+      console.log(data)
+      const formData = data.form
+      if(!data.isUpdate) {
+        await this.create_task(formData)
       } else {
-        await this.update_task(this.form)
+        await this.update_task(formData)
       }
       await this.fetch_tasks()
-      if(this.errorMessage.length !== 0) {
-        this.showFormModal = !this.showFormModal
+      if(this.errorMessage.length === 0) {
+        this.showFormModal = false
       }
     }
   }

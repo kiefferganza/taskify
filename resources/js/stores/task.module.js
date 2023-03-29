@@ -35,7 +35,6 @@ export const actions = {
            ...payload,
         })
             .then((response) => {
-                commit('updateTask', response.data.data)
                 return response
             })
             .catch((error) => {
