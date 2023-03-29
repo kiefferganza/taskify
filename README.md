@@ -1,12 +1,8 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
 
-<p align="center">
-    <img src="https://app.chipperci.com/projects/6fad1690-acea-4dbd-b83c-20d34e4b8737/status/master" alt="Build Status">
-</p>
 
-## Laravel Fortify Vue SPA
+## Taskify
 
-A simple and clean boilerplate to start a new SPA project with authentication and more features from fortify. Its like the little sister of Jetstream, but as SPA. This boilerplate uses the following tools:
+An SPA application built with Laravel, Sanctum, Fortify, Vue, Vue Router, Vuex and Tailwindcss:
 
 - [Laravel 9.x](https://github.com/laravel/laravel)
 - [Laravel Sanctum](https://laravel.com/docs/9.x/sanctum)
@@ -18,29 +14,60 @@ A simple and clean boilerplate to start a new SPA project with authentication an
 
 ## Features
 
-The following Sanctum and Fortify features are implemented in this Vue SPA:
+The following Sanctum and Fortify features are implemented in this Application:
 
+- ✅ Kanban Board
 - ✅ Login
-- ✅ Passwort Reset
+- ✅ Password Reset
 - ✅ Registration
 - ✅ Profile Management
 - ✅ Password Confirmation
-- ✅ Two Factor Authentication with Confirmation
 - ✅ E-Mail Verification
 
-## Screenshots
+### Installation
 
-A Picture Is Worth More Than A Thousand Words.
+Clone the repository and install the dependencies:
 
-![art/screenshot-login.jpg](art/screenshot-login.jpg)
+```bash
+git clone https://github.com/kiefferganza/taskify.git
+```
 
-![art/screenshot-home.jpg](art/screenshot-home.jpg)
+Install the dependencies:
 
-![art/screenshot-user-settings.jpg](art/screenshot-user-settings.jpg)
+```bash
+composer install
+```
 
-![art/screenshot-2fa-activation.jpg](art/screenshot-2fa-activation.jpg)
+Install the NPM dependencies:
 
-![art/screenshot-confirm-password.jpg](art/screenshot-confirm-password.jpg)
+```bash
+npm install
+```
+
+Copy the example env file and make the required configuration changes in the .env file:
+
+```bash
+cp .env.example .env
+```
+Generate a new application key:
+
+```bash
+php artisan key:generate
+```
+
+Run the database migrations (Set the database connection in .env before migrating):
+
+```bash
+php artisan migrate
+```
+
+Start the app using the following command:
+
+```bash
+php artisan serve 
+npm run watch
+```
+
 
 ## Testing
 
@@ -60,10 +87,4 @@ In order to ensure that the Laravel community is welcoming to all, please review
 
 ## Security Vulnerabilities
 
-If you discover a security vulnerability within Laravel, please send an e-mail via [tobias@byte.software](mailto:tobias@byte.software). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).    
-The Vue framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).    
-This repository is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).    
+If you discover a security vulnerability within Laravel, please send an e-mail via [kiefferganza23@gmail.com](mailto:kiefferganza23@gmail.com). All security vulnerabilities will be promptly addressed.
